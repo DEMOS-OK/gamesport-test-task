@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  gstt-nginx:
+    image: nginx:stable-alpine
+    container_name: gstt-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./:/var/www/html
+      - ./.docker/nginx/logs:/var/log/nginx
+
+  gstt-fpm:
+    build:
+      args:
+        user: network-user
+        uid: 1000
+      context: .
+      dockerfile: .docker/php-fpm/Dockerfile
+    container_name: gstt-fpm
+    image: php:8.2
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+
+  gstt-postgres:
+    image: postgres:16
+    container_name: gstt-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.docker/postgres/data/master:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
