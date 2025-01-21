@@ -1,10 +1,10 @@
 <?php
 
+use App\FileConverter\UI\FileConverterController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', static function () {
-    return redirect()->route('json-tree-generator');
+    return redirect()->route('file-converter');
 });
 
 Route::middleware([
@@ -12,7 +12,13 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/json-tree-generator', static function () {
-        return Inertia::render('JsonTreeGenerator');
-    })->name('json-tree-generator');
+    Route::get('/file-converter', [FileConverterController::class, 'index'])->name('file-converter');
+
+    Route::post('/file-converter/convert-csv-to-json', [FileConverterController::class, 'convertCSVtoJSON'])->name(
+        'convert-csv-to-json'
+    );
+
+    Route::get('/file-converter/download/{fileId}', [FileConverterController::class, 'download'])->name(
+        'download-json'
+    );
 });

@@ -26,3 +26,5 @@ yarn-error.log
 .docker/nginx/logs/
 .docker/postgres/data/
 .docker/php-fpm/logs
+public/converter/csv/*
+public/converter/json/*
